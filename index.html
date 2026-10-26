@@ -378,6 +378,36 @@
   }
   .active-item .sub { font-size: 16px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
 
+  /* Acciones en filas */
+  .row-actions {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .icon-btn {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+    border: 2px solid transparent;
+    background: var(--border);
+    color: var(--text);
+    flex-shrink: 0;
+  }
+  .icon-btn svg { width: 20px; height: 20px; }
+  .icon-btn:hover { opacity: .85; transform: scale(1.05); }
+  .icon-btn.edit {
+    background: var(--accent);
+    color: #111111;
+    border-color: #111111;
+  }
+  .icon-btn.delete {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+  .icon-btn.delete:hover { background: var(--danger); color: #fff; }
+
   .table-wrap { overflow-x: auto; border-radius: var(--radius); -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 17px; min-width: 100%; }
   thead tr { background: var(--border); }
@@ -481,6 +511,30 @@
   .modal-body .summary-row.total .v { font-size: 26px; color: var(--success); font-weight: 900; }
   .modal-footer { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
   .modal-footer .btn { width: auto; padding: 18px 32px; font-size: 18px; min-width: 150px; }
+
+  /* Modal edición: form más compacto */
+  .modal.edit-modal {
+    max-width: 560px;
+    text-align: left;
+    padding: 30px;
+  }
+  .modal.edit-modal .modal-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .modal.edit-modal .field {
+    margin-bottom: 16px;
+  }
+  .modal.edit-modal .input {
+    font-size: 20px;
+    padding: 14px 16px;
+    letter-spacing: 1px;
+    min-height: 52px;
+  }
+  .modal.edit-modal .field label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
 
   .toast {
     position: fixed; bottom: 130px; left: 50%;
@@ -730,7 +784,7 @@
         <span>Contacta al Desarrollador</span>
       </button>
     </div>
-    <div class="drawer-foot">PWA v2.6 · Offline Ready</div>
+    <div class="drawer-foot">PWA v2.7 · Offline Ready</div>
   </aside>
 
   <main class="main" id="main"></main>
@@ -781,6 +835,7 @@ const ICONS = {
   plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
   search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>`,
   trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>`,
+  edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
   download: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>`,
   upload: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>`,
   save: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>`,
@@ -896,10 +951,7 @@ function updateMonthlyAmount(id, value) {
 }
 
 /* ==================================================================
-   LÓGICA DE VENCIMIENTO (CORREGIDA)
-   - Usa lastPaidMonth (YYYY-MM) para saber si ya pagó el mes actual
-   - Si ya pagó este mes → próximo vencimiento es el próximo mes
-   - Si no ha pagado este mes y ya pasó el día de pago → vencido
+   LÓGICA DE VENCIMIENTO
 ================================================================== */
 function getNextPaymentDate(v) {
   const today = new Date();
@@ -909,23 +961,12 @@ function getNextPaymentDate(v) {
   const paymentDay = Math.max(1, Math.min(31, Number(v.paymentDay) || 1));
   const paidThisMonth = (v.lastPaidMonth === todayMonthKey);
 
-  // Año/mes base del próximo vencimiento
   let baseYear = today.getFullYear();
   let baseMonth = today.getMonth();
 
   if (paidThisMonth) {
-    // Ya pagó este mes → el próximo vencimiento es el mes siguiente
     baseMonth += 1;
     if (baseMonth > 11) { baseMonth = 0; baseYear += 1; }
-  } else {
-    // Aún no paga este mes:
-    // Si el día de pago es HOY o ya pasó → el vencimiento es HOY (a las 23:59:59)
-    // Si aún no llega el día de pago → el vencimiento es este mes en ese día
-    if (paymentDay > today.getDate()) {
-      // Aún no llega → este mes
-    } else {
-      // Es hoy o ya pasó → hoy mismo se considera vencimiento (para pintar en rojo)
-    }
   }
 
   const maxDay = new Date(baseYear, baseMonth + 1, 0).getDate();
@@ -943,27 +984,23 @@ function getNextDueDate(v) {
   return getNextPaymentDate(v);
 }
 
-/* Determina si un vehículo está vencido AHORA */
 function isDueNow(v) {
   if (!v) return false;
   const today = new Date();
   const todayMonthKey = monthKey(today);
   const paymentDay = Number(v.paymentDay) || 1;
 
-  // Si ya pagó este mes → NUNCA aparece como vencido
   if (v.lastPaidMonth === todayMonthKey) return false;
-
-  // Aún no ha pagado este mes:
-  // Es vencido si el día de pago es HOY o ya pasó
   if (paymentDay <= today.getDate()) return true;
-
   return false;
 }
 
 /* ==================================================================
    MODAL & TOAST
 ================================================================== */
-function showModal(title, bodyHtml, iconSvg = ICONS.checkCircle, footerHtml = null, iconColor = null) {
+function showModal(title, bodyHtml, iconSvg = ICONS.checkCircle, footerHtml = null, iconColor = null, extraClass = '') {
+  const modal = $('#modal');
+  modal.className = 'modal' + (extraClass ? ' ' + extraClass : '');
   $('#modalTitle').textContent = title;
   $('#modalBody').innerHTML = bodyHtml;
   $('#modalIcon').innerHTML = iconSvg;
@@ -1132,11 +1169,8 @@ function renderInicio() {
         : '';
 
       let msg;
-      if (isToday) {
-        msg = 'Vence HOY';
-      } else {
-        msg = 'Vencido hace ' + daysLate + ' día' + (daysLate !== 1 ? 's' : '');
-      }
+      if (isToday) msg = 'Vence HOY';
+      else msg = 'Vencido hace ' + daysLate + ' día' + (daysLate !== 1 ? 's' : '');
 
       html += `
         <div class="alert-card">
@@ -1151,9 +1185,11 @@ function renderInicio() {
               <div class="alert-sub">Valor: ${fmtMoney(amount)} · Día de pago: ${v.paymentDay || '—'}</div>
             </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+            <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
             ${waBtn}
             <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+            <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
           </div>
         </div>`;
     });
@@ -1188,9 +1224,11 @@ function renderInicio() {
               <div class="sub">${escapeHtml(v.name || '—')} · ${fmtMoney(amount)} · Día ${v.paymentDay}</div>
             </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+            <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
             ${waBtn}
             <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+            <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
           </div>
         </div>`;
     });
@@ -1345,7 +1383,7 @@ function attachRegistrarEvents() {
 }
 
 /* ==================================================================
-   VISTA: VER
+   VISTA: VER — con botones Editar / Eliminar
 ================================================================== */
 function renderVer() {
   const q = searchQueries.ver.toUpperCase();
@@ -1406,9 +1444,11 @@ function renderVer() {
             <span class="payment-day-chip">${v.paymentDay || '—'}</span>
           </td>
           <td class="right" style="white-space:nowrap">
-            <div style="display:inline-flex;gap:8px;align-items:center;justify-content:flex-end">
+            <div class="row-actions">
+              <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
               ${waBtn}
               <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+              <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
             </div>
           </td>
         </tr>`;
@@ -1457,6 +1497,203 @@ function attachVerEvents() {
 }
 
 /* ==================================================================
+   MODAL: EDITAR VEHÍCULO
+================================================================== */
+function openEditModal(id) {
+  const v = state.activeMonths.find(x => x.id === id);
+  if (!v) return;
+
+  const isMoto = v.type === 'moto';
+  const selMoto = isMoto ? 'background:var(--accent);color:#111111;border-color:#111111' : '';
+  const selCarro = !isMoto ? 'background:var(--accent);color:#111111;border-color:#111111' : '';
+  const txt = 'background:var(--border);color:var(--text);border-color:transparent';
+
+  const body = `
+    <div class="field" style="margin-bottom:14px">
+      <label>Tipo de vehículo</label>
+      <div class="vehicle-toggle" style="margin:8px 0 0" data-edit-group="mes">
+        <button data-type="moto" style="${isMoto ? selMoto : txt}" onclick="editSetType('moto')">${ICONS.moto}<span>Moto</span></button>
+        <button data-type="carro" style="${!isMoto ? selCarro : txt}" onclick="editSetType('carro')">${ICONS.car}<span>Carro</span></button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Placa</label>
+      <input type="text" id="editPlate" class="input" maxlength="8" value="${escapeHtml(v.plate)}" style="text-transform:uppercase">
+    </div>
+
+    <div class="field">
+      <label>Nombre del cliente</label>
+      <input type="text" id="editName" class="input" maxlength="60" value="${escapeHtml(v.name || '')}" style="text-transform:none;letter-spacing:0">
+    </div>
+
+    <div class="field">
+      <label>Teléfono (WhatsApp)</label>
+      <input type="tel" id="editPhone" class="input" maxlength="15" value="${escapeHtml(v.phone || '')}" style="letter-spacing:1px">
+    </div>
+
+    <div class="field">
+      <label>Día de pago (1 a 31)</label>
+      <input type="number" id="editPaymentDay" class="input" min="1" max="31" value="${v.paymentDay || ''}" style="text-transform:none;letter-spacing:0;text-align:center">
+    </div>
+
+    <div class="field">
+      <label>Monto mensual ($)</label>
+      <input type="number" id="editAmount" class="input" min="0" step="100" value="${getMonthlyAmount(v)}" style="text-transform:none;letter-spacing:0">
+    </div>
+
+    <input type="hidden" id="editId" value="${v.id}">
+    <input type="hidden" id="editType" value="${v.type}">
+  `;
+
+  const footer = `
+    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-accent" onclick="saveEdit()">${ICONS.save} Guardar cambios</button>
+  `;
+
+  showModal('Editar vehículo', body, ICONS.edit, footer, null, 'edit-modal');
+
+  // Aplicar validaciones en vivo
+  setTimeout(() => {
+    const plate = $('#editPlate');
+    if (plate) {
+      plate.addEventListener('input', e => {
+        e.target.value = normalizePlate(e.target.value);
+      });
+    }
+    const phone = $('#editPhone');
+    if (phone) {
+      phone.addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/[^\d+]/g, '').slice(0, 15);
+      });
+    }
+    const dayInput = $('#editPaymentDay');
+    if (dayInput) {
+      dayInput.addEventListener('input', e => {
+        let val = e.target.value.replace(/[^\d]/g, '');
+        if (val.length > 2) val = val.slice(0, 2);
+        const n = parseInt(val);
+        if (!isNaN(n) && n > 31) val = '31';
+        if (val === '0') val = '1';
+        e.target.value = val;
+      });
+    }
+  }, 50);
+}
+
+let editSelectedType = null;
+function editSetType(type) {
+  editSelectedType = type;
+  const hidden = $('#editType');
+  if (hidden) hidden.value = type;
+  // Actualizar botones visualmente
+  const buttons = document.querySelectorAll('[data-edit-group="mes"] button');
+  const selStyle = 'background:var(--accent);color:#111111;border-color:#111111';
+  const txtStyle = 'background:var(--border);color:var(--text);border-color:transparent';
+  buttons.forEach(b => {
+    b.style.cssText = b.dataset.type === type ? selStyle : txtStyle;
+  });
+}
+
+function saveEdit() {
+  const id = $('#editId')?.value;
+  const idx = state.activeMonths.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const v = state.activeMonths[idx];
+
+  const plate = normalizePlate($('#editPlate')?.value);
+  const name = ($('#editName')?.value || '').trim();
+  const phone = ($('#editPhone')?.value || '').replace(/[^\d+]/g, '').trim();
+  const paymentDayRaw = $('#editPaymentDay')?.value;
+  const amountRaw = $('#editAmount')?.value;
+  const type = $('#editType')?.value || v.type;
+
+  if (plate.length < 5) {
+    showModal('Atención', 'La placa debe tener al menos 5 caracteres.', ICONS.warn, null, 'var(--warn-bg)');
+    return;
+  }
+  if (name.length < 2) {
+    showModal('Atención', 'Ingrese el nombre del cliente.', ICONS.warn, null, 'var(--warn-bg)');
+    return;
+  }
+  if (phone.length < 7) {
+    showModal('Atención', 'Ingrese un teléfono válido.', ICONS.warn, null, 'var(--warn-bg)');
+    return;
+  }
+  const paymentDay = parseInt(paymentDayRaw);
+  if (isNaN(paymentDay) || paymentDay < 1 || paymentDay > 31) {
+    showModal('Atención', 'Ingrese un día de pago válido (1 a 31).', ICONS.warn, null, 'var(--warn-bg)');
+    return;
+  }
+  const amountNum = Number(amountRaw);
+  if (amountRaw === '' || isNaN(amountNum) || amountNum <= 0) {
+    showModal('Atención', 'Ingrese el monto mensual.', ICONS.warn, null, 'var(--warn-bg)');
+    return;
+  }
+
+  // Detectar si cambió el día de pago
+  const dayChanged = v.paymentDay !== paymentDay;
+
+  v.plate = plate;
+  v.name = name;
+  v.phone = phone;
+  v.paymentDay = paymentDay;
+  v.amount = amountNum;
+  v.type = type;
+
+  // Si cambió el día de pago, reiniciar el estado de pago para este mes
+  // para que el sistema recalcule
+  if (dayChanged) {
+    v.lastPaidMonth = null;
+  }
+
+  saveState();
+  closeModal();
+  render();
+  showToast('Cambios guardados');
+}
+
+/* ==================================================================
+   ELIMINAR VEHÍCULO
+================================================================== */
+function confirmDelete(id) {
+  const v = state.activeMonths.find(x => x.id === id);
+  if (!v) return;
+
+  const body = `
+    <p style="text-align:center;font-size:18px;margin-bottom:8px">
+      ¿Seguro que deseas eliminar este vehículo?
+    </p>
+    <div style="background:var(--border);border-radius:12px;padding:14px;margin-top:12px;text-align:center">
+      <div style="font-weight:800;font-size:20px;color:var(--text)">${escapeHtml(v.plate)}</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-top:2px">${escapeHtml(v.name || '—')} · ${v.type}</div>
+    </div>
+    <p style="text-align:center;font-size:14px;color:var(--text-soft);margin-top:14px;font-weight:500">
+      Esta acción no se puede deshacer.
+    </p>
+  `;
+
+  const footer = `
+    <button class="btn btn-ghost" onclick="closeModal()">No</button>
+    <button class="btn btn-danger" onclick="doDelete('${id}')">${ICONS.trash} Sí, eliminar</button>
+  `;
+
+  showModal('Eliminar vehículo', body, ICONS.warn, footer, 'var(--danger-bg)');
+}
+
+function doDelete(id) {
+  const idx = state.activeMonths.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const v = state.activeMonths[idx];
+  state.activeMonths.splice(idx, 1);
+  state.notifiedToday = state.notifiedToday.filter(x => x !== id);
+  saveState();
+  closeModal();
+  render();
+  showToast('Vehículo ' + v.plate + ' eliminado');
+}
+
+/* ==================================================================
    ACCIONES
 ================================================================== */
 function registerMes() {
@@ -1499,7 +1736,7 @@ function registerMes() {
     paymentDay,
     amount: amountNum,
     startDate: new Date().toISOString(),
-    lastPaidMonth: null,   // aún no ha pagado este mes
+    lastPaidMonth: null,
     service: 'mes'
   });
   saveState();
@@ -1535,23 +1772,17 @@ function registerMes() {
   }
 }
 
-/* ==================================================================
-   PAGAR (CORREGIDO): marca el mes actual como pagado
-================================================================== */
 function payMonthly(id) {
   const idx = state.activeMonths.findIndex(v => v.id === id);
   if (idx === -1) return;
   const v = state.activeMonths[idx];
   const amount = getMonthlyAmount(v);
 
-  // Marcar el mes actual como pagado
   const now = new Date();
   v.lastPaidMonth = monthKey(now);
 
-  // Quitar de notificados hoy
   state.notifiedToday = state.notifiedToday.filter(x => x !== v.id);
 
-  // Registrar en historial
   state.history.unshift({
     id: uid('hist'),
     plate: v.plate,
@@ -1570,7 +1801,6 @@ function payMonthly(id) {
   saveState();
   render();
 
-  // Mostrar el próximo vencimiento
   const nextDue = getNextDueDate(v);
   const nextDays = getDaysRemaining(nextDue);
   const body = `
@@ -1900,7 +2130,7 @@ function renderContacto() {
         © ${new Date().getFullYear()} Roberto Alfonso · Todos los derechos reservados
       </p>
       <p style="font-size:13px;color:var(--text-soft);margin-top:6px;font-weight:500">
-        Parqueadero Bandera Center · PWA v2.6
+        Parqueadero Bandera Center · PWA v2.7
       </p>
     </div>`;
 }
@@ -2000,7 +2230,7 @@ function initPWA() {
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE = 'pcm-v6';
+        const CACHE = 'pcm-v7';
         self.addEventListener('install', e => { self.skipWaiting(); });
         self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
         self.addEventListener('fetch', e => {
@@ -2154,6 +2384,11 @@ window.closeModal = closeModal;
 window.registerMes = registerMes;
 window.payMonthly = payMonthly;
 window.updateMonthlyAmount = updateMonthlyAmount;
+window.openEditModal = openEditModal;
+window.saveEdit = saveEdit;
+window.editSetType = editSetType;
+window.confirmDelete = confirmDelete;
+window.doDelete = doDelete;
 window.exportJSON = exportJSON;
 window.exportAndEmailJSON = exportAndEmailJSON;
 window.importJSON = importJSON;
