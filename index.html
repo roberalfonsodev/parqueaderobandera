@@ -6,9 +6,6 @@
 <meta name="theme-color" content="#111111">
 <title>Parqueadero Bandera Center</title>
 <style>
-  /* ============================================================
-     RESET + BASE
-  ============================================================ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -116,11 +113,10 @@
     border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    transition: background .3s ease;
   }
   .header-logo svg { width: 30px; height: 30px; }
   .header-title { font-size: 22px; font-weight: 800; line-height: 1.15; letter-spacing: -.3px; }
-  .header-sub { font-size: 15px; font-weight: 600; color: var(--accent); margin-top: 3px; transition: color .3s ease; }
+  .header-sub { font-size: 15px; font-weight: 600; color: var(--accent); margin-top: 3px; }
   .btn-menu {
     color: var(--accent);
     padding: 12px;
@@ -144,8 +140,7 @@
   .drawer {
     position: fixed; top: 0; right: 0;
     width: 400px; max-width: 85vw; height: 100%;
-    background: #111111;
-    color: #fff;
+    background: #111111; color: #fff;
     z-index: 60;
     display: flex; flex-direction: column;
     transform: translateX(100%);
@@ -194,7 +189,6 @@
     border-top: 1px solid var(--border);
     z-index: 30;
     box-shadow: 0 -3px 14px rgba(0,0,0,.18);
-    transition: background .3s ease;
   }
   .nav-btn {
     flex: 1;
@@ -235,7 +229,6 @@
     padding: 52px 26px;
     text-align: center;
     margin-top: 22px;
-    transition: background .3s ease;
   }
   .empty-icon {
     width: 88px; height: 88px;
@@ -257,7 +250,6 @@
     border-left: 6px solid var(--danger);
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; margin-bottom: 14px;
-    transition: background .3s ease;
   }
   .alert-card .plate { font-weight: 800; font-size: 22px; letter-spacing: .8px; color: var(--text); }
   .alert-card .customer-name {
@@ -354,6 +346,8 @@
   .btn-ghost:hover { opacity: .8; }
   .btn-danger { background: var(--danger); color: #fff; }
   .btn-danger:hover { opacity: .9; }
+  .btn-cancel-text { background: transparent; color: var(--danger); border: 2px solid transparent; }
+  .btn-cancel-text:hover { background: var(--danger-bg); }
   .btn-sm { padding: 14px 22px; font-size: 17px; width: auto; border-radius: 12px; min-height: 52px; }
 
   .active-item {
@@ -364,7 +358,6 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; margin-bottom: 12px;
     box-shadow: var(--shadow);
-    transition: background .3s ease;
   }
   .active-item .meta { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
   .active-item .info { min-width: 0; }
@@ -378,7 +371,6 @@
   }
   .active-item .sub { font-size: 16px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
 
-  /* Acciones en filas */
   .row-actions {
     display: inline-flex;
     gap: 6px;
@@ -445,7 +437,6 @@
     padding: 26px;
     border: 1.5px solid var(--border);
     box-shadow: var(--shadow);
-    transition: background .3s ease;
   }
   .stat-card.dark { background: var(--text); color: var(--surface); border-left: 6px solid var(--accent); }
   .stat-card .label {
@@ -482,7 +473,6 @@
     animation: modalIn .25s ease;
     max-height: 92vh;
     overflow-y: auto;
-    transition: background .3s ease;
   }
   @keyframes modalIn {
     from { opacity: 0; transform: scale(.96) translateY(8px); }
@@ -512,7 +502,6 @@
   .modal-footer { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
   .modal-footer .btn { width: auto; padding: 18px 32px; font-size: 18px; min-width: 150px; }
 
-  /* Modal edición: form más compacto */
   .modal.edit-modal {
     max-width: 560px;
     text-align: left;
@@ -784,7 +773,7 @@
         <span>Contacta al Desarrollador</span>
       </button>
     </div>
-    <div class="drawer-foot">PWA v2.7 · Offline Ready</div>
+    <div class="drawer-foot">PWA v2.9 · Offline Ready</div>
   </aside>
 
   <main class="main" id="main"></main>
@@ -840,6 +829,7 @@ const ICONS = {
   upload: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>`,
   save: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>`,
   checkCircle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>`,
+  undo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>`,
   whatsapp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/></svg>`,
   install: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>`,
   bell: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
@@ -885,6 +875,8 @@ let state = defaultState();
 let searchQueries = { ver: '' };
 let selectedTypes = { mes: 'moto' };
 let inicioSearchQuery = '';
+
+let registerSelectedStatus = 'pendiente';
 
 let deferredInstallPrompt = null;
 const INSTALL_DISMISS_KEY = 'pcm_install_dismissed_v1';
@@ -948,6 +940,13 @@ function updateMonthlyAmount(id, value) {
   }
   saveState();
   render();
+}
+
+function plateExists(plate, excludeId = null) {
+  const normalized = normalizePlate(plate);
+  return state.activeMonths.some(v =>
+    v.plate === normalized && v.id !== excludeId
+  );
 }
 
 /* ==================================================================
@@ -1188,7 +1187,7 @@ function renderInicio() {
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
             <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
             ${waBtn}
-            <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+            <button class="btn btn-accent btn-sm" onclick="confirmPay('${v.id}')">Pagado</button>
             <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
           </div>
         </div>`;
@@ -1227,7 +1226,7 @@ function renderInicio() {
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
             <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
             ${waBtn}
-            <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+            <button class="btn btn-accent btn-sm" onclick="confirmPay('${v.id}')">Pagado</button>
             <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
           </div>
         </div>`;
@@ -1307,10 +1306,18 @@ function markNotified(id) {
 }
 
 /* ==================================================================
-   VISTA: REGISTRAR
+   VISTA: REGISTRAR — CON ESTADO PAGADO/PENDIENTE (sin perder datos)
 ================================================================== */
 function renderRegistrar() {
   const sel = selectedTypes.mes;
+  const isPagado = registerSelectedStatus === 'pagado';
+  const isPendiente = registerSelectedStatus === 'pendiente';
+
+  const selStyle = 'background:var(--accent);color:#111111;border-color:#111111;box-shadow:var(--shadow)';
+  const txtStyle = 'background:var(--border);color:var(--text);border-color:transparent';
+  const pagadoActive = 'background:var(--success);color:#fff;border-color:#0f7a36';
+  const pendienteActive = 'background:var(--warn);color:#fff;border-color:#92400e';
+
   return `
     <div class="section-head">
       <h2 class="section-title">Registrar Mensualidad</h2>
@@ -1320,8 +1327,8 @@ function renderRegistrar() {
     <div class="card">
       <label class="field" style="display:block;font-size:15px;font-weight:800;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Tipo de vehículo:</label>
       <div class="vehicle-toggle" data-group="mes">
-        <button data-type="moto" class="${sel === 'moto' ? 'active' : ''}">${ICONS.moto}<span>Moto</span></button>
-        <button data-type="carro" class="${sel === 'carro' ? 'active' : ''}">${ICONS.car}<span>Carro</span></button>
+        <button data-type="moto" style="${sel === 'moto' ? selStyle : txtStyle}" onclick="setRegisterVehicleType('moto')">${ICONS.moto}<span>Moto</span></button>
+        <button data-type="carro" style="${sel === 'carro' ? selStyle : txtStyle}" onclick="setRegisterVehicleType('carro')">${ICONS.car}<span>Carro</span></button>
       </div>
 
       <div class="field">
@@ -1335,7 +1342,7 @@ function renderRegistrar() {
       </div>
 
       <div class="field">
-        <label>Teléfono (WhatsApp)</label>
+        <label>Teléfono (WhatsApp) — <span style="color:var(--text-soft);font-weight:600;text-transform:none;letter-spacing:0">Opcional</span></label>
         <input type="tel" id="phoneMes" class="input" maxlength="15" placeholder="Ej: 3001234567" inputmode="numeric" autocomplete="off" style="letter-spacing:1px;font-size:22px">
       </div>
 
@@ -1350,8 +1357,50 @@ function renderRegistrar() {
         <input type="number" id="amountMes" class="input" min="0" step="100" placeholder="Ej: 40000" style="text-transform:none;letter-spacing:0;font-size:22px;font-weight:800">
       </div>
 
+      <div class="field">
+        <label>Estado de pago</label>
+        <div class="vehicle-toggle" data-register-status style="margin:0">
+          <button type="button" data-status="pagado" style="flex:1;display:flex;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:19px;min-height:var(--tap);border:2px solid;transition:all .22s ease;${isPagado ? pagadoActive : txtStyle}" onclick="setRegisterStatus('pagado')">
+            ${ICONS.check} <span>PAGADO</span>
+          </button>
+          <button type="button" data-status="pendiente" style="flex:1;display:flex;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:19px;min-height:var(--tap);border:2px solid;transition:all .22s ease;${isPendiente ? pendienteActive : txtStyle}" onclick="setRegisterStatus('pendiente')">
+            ${ICONS.warn} <span>PENDIENTE</span>
+          </button>
+        </div>
+        <p style="font-size:14px;color:var(--text-muted);margin-top:8px;font-weight:500">Marca el estado actual de pago del vehículo.</p>
+      </div>
+
       <button class="btn btn-primary" onclick="registerMes()">${ICONS.plus} Registrar Mensualidad</button>
     </div>`;
+}
+
+/* Cambiar estado SIN perder los datos del formulario */
+function setRegisterStatus(status) {
+  registerSelectedStatus = status;
+  const buttons = document.querySelectorAll('[data-register-status] button');
+  const txtStyle = 'background:var(--border);color:var(--text);border-color:transparent';
+  buttons.forEach(btn => {
+    const isActive = btn.dataset.status === status;
+    let style;
+    if (btn.dataset.status === 'pagado') {
+      style = isActive ? 'background:var(--success);color:#fff;border-color:#0f7a36' : txtStyle;
+    } else {
+      style = isActive ? 'background:var(--warn);color:#fff;border-color:#92400e' : txtStyle;
+    }
+    btn.style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:19px;min-height:var(--tap);border:2px solid;transition:all .22s ease;${style}`;
+  });
+}
+
+/* Cambiar tipo de vehículo SIN perder los datos */
+function setRegisterVehicleType(type) {
+  selectedTypes.mes = type;
+  const buttons = document.querySelectorAll('[data-group="mes"] button');
+  const selStyle = 'background:var(--accent);color:#111111;border-color:#111111;box-shadow:var(--shadow)';
+  const txtStyle = 'background:var(--border);color:var(--text);border-color:transparent';
+  buttons.forEach(btn => {
+    const isActive = btn.dataset.type === type;
+    btn.style.cssText = `flex:1;display:flex;align-items:center;justify-content:center;gap:12px;padding:20px 16px;border-radius:var(--radius-sm);font-weight:800;font-size:19px;min-height:var(--tap);border:2px solid;transition:all .22s ease;${isActive ? selStyle : txtStyle}`;
+  });
 }
 
 function attachRegistrarEvents() {
@@ -1377,13 +1426,10 @@ function attachRegistrarEvents() {
       e.target.value = v;
     });
   }
-  $$('[data-group="mes"] button').forEach(btn => {
-    btn.addEventListener('click', () => { selectedTypes.mes = btn.dataset.type; render(); });
-  });
 }
 
 /* ==================================================================
-   VISTA: VER — con botones Editar / Eliminar
+   VISTA: VER
 ================================================================== */
 function renderVer() {
   const q = searchQueries.ver.toUpperCase();
@@ -1447,7 +1493,7 @@ function renderVer() {
             <div class="row-actions">
               <button class="icon-btn edit" onclick="openEditModal('${v.id}')" aria-label="Editar" title="Editar">${ICONS.edit}</button>
               ${waBtn}
-              <button class="btn btn-accent btn-sm" onclick="payMonthly('${v.id}')">Pagado</button>
+              <button class="btn btn-accent btn-sm" onclick="confirmPay('${v.id}')">Pagado</button>
               <button class="icon-btn delete" onclick="confirmDelete('${v.id}')" aria-label="Eliminar" title="Eliminar">${ICONS.trash}</button>
             </div>
           </td>
@@ -1497,7 +1543,32 @@ function attachVerEvents() {
 }
 
 /* ==================================================================
-   MODAL: EDITAR VEHÍCULO
+   MODAL: CONFIRMAR PAGO
+================================================================== */
+function confirmPay(id) {
+  const v = state.activeMonths.find(x => x.id === id);
+  if (!v) return;
+  const amount = getMonthlyAmount(v);
+
+  const body = `
+    <p style="text-align:center;font-size:18px;margin-bottom:14px">¿Registrar el pago de esta mensualidad?</p>
+    <div style="background:var(--border);border-radius:12px;padding:14px;text-align:center">
+      <div style="font-weight:800;font-size:20px;color:var(--text)">${escapeHtml(v.plate)}</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-top:2px">${escapeHtml(v.name || '—')} · ${v.type}</div>
+      <div style="font-size:20px;font-weight:800;color:var(--success);margin-top:8px">${fmtMoney(amount)}</div>
+    </div>
+  `;
+
+  const footer = `
+    <button class="btn btn-cancel-text" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-accent" onclick="payMonthly('${id}')">${ICONS.check} Aceptar</button>
+  `;
+
+  showModal('Confirmar pago', body, ICONS.receipt, footer);
+}
+
+/* ==================================================================
+   MODAL: EDITAR
 ================================================================== */
 function openEditModal(id) {
   const v = state.activeMonths.find(x => x.id === id);
@@ -1507,6 +1578,36 @@ function openEditModal(id) {
   const selMoto = isMoto ? 'background:var(--accent);color:#111111;border-color:#111111' : '';
   const selCarro = !isMoto ? 'background:var(--accent);color:#111111;border-color:#111111' : '';
   const txt = 'background:var(--border);color:var(--text);border-color:transparent';
+
+  const todayMonthKey = monthKey(new Date());
+  const hasPaidThisMonth = (v.lastPaidMonth === todayMonthKey);
+
+  const undoBlock = hasPaidThisMonth ? `
+    <div class="field" style="margin-top:8px;border-top:2px solid var(--border);padding-top:16px">
+      <label style="color:var(--success)">Estado de pago</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;background:var(--success-bg);padding:12px;border-radius:10px">
+        <span style="color:var(--success);width:22px;height:22px;display:inline-flex">${ICONS.checkCircle}</span>
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--success);font-size:15px">PAGADO este mes</div>
+          <div style="font-size:13px;color:var(--text-muted)">Mes: ${todayMonthKey}</div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-cancel-text" style="width:100%;border:2px solid var(--danger);padding:14px" onclick="confirmUndoPay('${v.id}')">
+        ${ICONS.undo} Deshacer pago
+      </button>
+    </div>
+  ` : `
+    <div class="field" style="margin-top:8px;border-top:2px solid var(--border);padding-top:16px">
+      <label>Estado de pago</label>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--warn-bg);padding:12px;border-radius:10px">
+        <span style="color:var(--warn);width:22px;height:22px;display:inline-flex">${ICONS.warn}</span>
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--warn);font-size:15px">PENDIENTE por pagar</div>
+          <div style="font-size:13px;color:var(--text-muted)">Aún no se registra pago este mes</div>
+        </div>
+      </div>
+    </div>
+  `;
 
   const body = `
     <div class="field" style="margin-bottom:14px">
@@ -1528,7 +1629,7 @@ function openEditModal(id) {
     </div>
 
     <div class="field">
-      <label>Teléfono (WhatsApp)</label>
+      <label>Teléfono (WhatsApp) — <span style="color:var(--text-soft);font-weight:600;text-transform:none;letter-spacing:0">Opcional</span></label>
       <input type="tel" id="editPhone" class="input" maxlength="15" value="${escapeHtml(v.phone || '')}" style="letter-spacing:1px">
     </div>
 
@@ -1542,6 +1643,8 @@ function openEditModal(id) {
       <input type="number" id="editAmount" class="input" min="0" step="100" value="${getMonthlyAmount(v)}" style="text-transform:none;letter-spacing:0">
     </div>
 
+    ${undoBlock}
+
     <input type="hidden" id="editId" value="${v.id}">
     <input type="hidden" id="editType" value="${v.type}">
   `;
@@ -1553,7 +1656,6 @@ function openEditModal(id) {
 
   showModal('Editar vehículo', body, ICONS.edit, footer, null, 'edit-modal');
 
-  // Aplicar validaciones en vivo
   setTimeout(() => {
     const plate = $('#editPlate');
     if (plate) {
@@ -1581,12 +1683,9 @@ function openEditModal(id) {
   }, 50);
 }
 
-let editSelectedType = null;
 function editSetType(type) {
-  editSelectedType = type;
   const hidden = $('#editType');
   if (hidden) hidden.value = type;
-  // Actualizar botones visualmente
   const buttons = document.querySelectorAll('[data-edit-group="mes"] button');
   const selStyle = 'background:var(--accent);color:#111111;border-color:#111111';
   const txtStyle = 'background:var(--border);color:var(--text);border-color:transparent';
@@ -1612,14 +1711,19 @@ function saveEdit() {
     showModal('Atención', 'La placa debe tener al menos 5 caracteres.', ICONS.warn, null, 'var(--warn-bg)');
     return;
   }
+  if (plateExists(plate, v.id)) {
+    showModal('Placa duplicada',
+      `<p style="text-align:center;font-size:18px">La placa <b>${escapeHtml(plate)}</b> ya está registrada en otro vehículo.</p>
+       <p style="text-align:center;font-size:15px;color:var(--text-muted);margin-top:8px">Por favor, verifica la información.</p>`,
+      ICONS.warn, null, 'var(--danger-bg)');
+    return;
+  }
   if (name.length < 2) {
     showModal('Atención', 'Ingrese el nombre del cliente.', ICONS.warn, null, 'var(--warn-bg)');
     return;
   }
-  if (phone.length < 7) {
-    showModal('Atención', 'Ingrese un teléfono válido.', ICONS.warn, null, 'var(--warn-bg)');
-    return;
-  }
+  // ✅ Teléfono ya NO es obligatorio en edición
+
   const paymentDay = parseInt(paymentDayRaw);
   if (isNaN(paymentDay) || paymentDay < 1 || paymentDay > 31) {
     showModal('Atención', 'Ingrese un día de pago válido (1 a 31).', ICONS.warn, null, 'var(--warn-bg)');
@@ -1631,7 +1735,6 @@ function saveEdit() {
     return;
   }
 
-  // Detectar si cambió el día de pago
   const dayChanged = v.paymentDay !== paymentDay;
 
   v.plate = plate;
@@ -1641,8 +1744,6 @@ function saveEdit() {
   v.amount = amountNum;
   v.type = type;
 
-  // Si cambió el día de pago, reiniciar el estado de pago para este mes
-  // para que el sistema recalcule
   if (dayChanged) {
     v.lastPaidMonth = null;
   }
@@ -1651,6 +1752,46 @@ function saveEdit() {
   closeModal();
   render();
   showToast('Cambios guardados');
+}
+
+/* ==================================================================
+   DESHACER PAGO
+================================================================== */
+function confirmUndoPay(id) {
+  const v = state.activeMonths.find(x => x.id === id);
+  if (!v) return;
+
+  const body = `
+    <p style="text-align:center;font-size:18px;margin-bottom:8px">
+      ¿Deshacer el pago de este vehículo?
+    </p>
+    <div style="background:var(--border);border-radius:12px;padding:14px;margin-top:12px;text-align:center">
+      <div style="font-weight:800;font-size:20px;color:var(--text)">${escapeHtml(v.plate)}</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-top:2px">${escapeHtml(v.name || '—')} · ${v.type}</div>
+    </div>
+    <p style="text-align:center;font-size:14px;color:var(--text-soft);margin-top:14px;font-weight:500">
+      El vehículo volverá a aparecer como vencido si corresponde.
+    </p>
+  `;
+
+  const footer = `
+    <button class="btn btn-cancel-text" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-danger" onclick="doUndoPay('${id}')">${ICONS.undo} Sí, deshacer</button>
+  `;
+
+  showModal('Deshacer pago', body, ICONS.undo, footer, 'var(--warn-bg)');
+}
+
+function doUndoPay(id) {
+  const idx = state.activeMonths.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const v = state.activeMonths[idx];
+  v.lastPaidMonth = null;
+  state.notifiedToday = state.notifiedToday.filter(x => x !== id);
+  saveState();
+  closeModal();
+  render();
+  showToast('Pago deshecho para ' + v.plate);
 }
 
 /* ==================================================================
@@ -1694,7 +1835,7 @@ function doDelete(id) {
 }
 
 /* ==================================================================
-   ACCIONES
+   ACCIONES: REGISTRAR Y PAGAR
 ================================================================== */
 function registerMes() {
   const input = $('#plateMes');
@@ -1708,14 +1849,19 @@ function registerMes() {
     showModal('Atención', 'Ingrese una placa válida (mínimo 5 caracteres).', ICONS.warn, null, 'var(--warn-bg)');
     return;
   }
+  if (plateExists(plate)) {
+    showModal('Placa duplicada',
+      `<p style="text-align:center;font-size:18px">La placa <b>${escapeHtml(plate)}</b> ya se encuentra registrada.</p>
+       <p style="text-align:center;font-size:15px;color:var(--text-muted);margin-top:8px">Por favor, verifica la información o utiliza otra placa.</p>`,
+      ICONS.warn, null, 'var(--danger-bg)');
+    return;
+  }
   if (name.length < 2) {
     showModal('Atención', 'Ingrese el nombre del cliente.', ICONS.warn, null, 'var(--warn-bg)');
     return;
   }
-  if (phone.length < 7) {
-    showModal('Atención', 'Ingrese un teléfono válido (mínimo 7 dígitos).', ICONS.warn, null, 'var(--warn-bg)');
-    return;
-  }
+  // ✅ Teléfono YA NO es obligatorio
+
   const paymentDay = parseInt(paymentDayRaw);
   if (isNaN(paymentDay) || paymentDay < 1 || paymentDay > 31) {
     showModal('Atención', 'Ingrese un día de pago válido (1 a 31).', ICONS.warn, null, 'var(--warn-bg)');
@@ -1727,7 +1873,8 @@ function registerMes() {
     return;
   }
 
-  state.activeMonths.push({
+  const now = new Date();
+  const newVehicle = {
     id: uid('m'),
     plate,
     type: selectedTypes.mes,
@@ -1735,14 +1882,33 @@ function registerMes() {
     phone,
     paymentDay,
     amount: amountNum,
-    startDate: new Date().toISOString(),
+    startDate: now.toISOString(),
     lastPaidMonth: null,
     service: 'mes'
-  });
+  };
+
+  if (registerSelectedStatus === 'pagado') {
+    newVehicle.lastPaidMonth = monthKey(now);
+    state.history.unshift({
+      id: uid('hist'),
+      plate,
+      type: selectedTypes.mes,
+      service: 'Mes (Mensualidad)',
+      amount: amountNum,
+      entryTime: fmtDate(Date.now()),
+      exitTime: fmtDate(Date.now()),
+      duration: '30 Días',
+      timestamp: Date.now(),
+      customer: name,
+      phone: phone,
+      paymentDay: paymentDay
+    });
+  }
+
+  state.activeMonths.push(newVehicle);
   saveState();
 
-  const today = new Date();
-  const isToday = (paymentDay === today.getDate());
+  const isToday = (paymentDay === now.getDate());
 
   if (isToday) {
     setTimeout(() => {
@@ -1760,7 +1926,9 @@ function registerMes() {
       render();
     }, 600);
   } else {
-    showToast('Mensualidad registrada');
+    showToast(registerSelectedStatus === 'pagado'
+      ? 'Vehículo registrado y marcado como PAGADO'
+      : 'Vehículo registrado como PENDIENTE');
     setTimeout(() => {
       const p = $('#plateMes'); if (p) p.value = '';
       const n = $('#nameMes'); if (n) n.value = '';
@@ -1770,6 +1938,8 @@ function registerMes() {
       if (p) p.focus();
     }, 100);
   }
+
+  registerSelectedStatus = 'pendiente';
 }
 
 function payMonthly(id) {
@@ -1808,7 +1978,15 @@ function payMonthly(id) {
     <div class="summary-row total"><span class="k">Registrado:</span><span class="v">${fmtMoney(amount)}</span></div>
     <div class="summary-row"><span class="k">Próximo vencimiento:</span><span class="v">${fmtDate(nextDue)}</span></div>
     <div class="summary-row"><span class="k">Días restantes:</span><span class="v">${nextDays} día${nextDays !== 1 ? 's' : ''}</span></div>`;
-  showModal('Mensualidad Renovada', body, ICONS.checkCircle);
+  showModal('Mensualidad Renovada', body, ICONS.checkCircle, `
+    <button class="btn btn-cancel-text" onclick="confirmUndoPayDirect('${v.id}')">${ICONS.undo} Deshacer</button>
+    <button class="btn btn-primary" onclick="closeModal()">Aceptar</button>
+  `);
+}
+
+function confirmUndoPayDirect(id) {
+  closeModal();
+  setTimeout(() => confirmUndoPay(id), 120);
 }
 
 /* ==================================================================
@@ -2130,7 +2308,7 @@ function renderContacto() {
         © ${new Date().getFullYear()} Roberto Alfonso · Todos los derechos reservados
       </p>
       <p style="font-size:13px;color:var(--text-soft);margin-top:6px;font-weight:500">
-        Parqueadero Bandera Center · PWA v2.7
+        Parqueadero Bandera Center · PWA v2.9
       </p>
     </div>`;
 }
@@ -2230,7 +2408,7 @@ function initPWA() {
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE = 'pcm-v7';
+        const CACHE = 'pcm-v9';
         self.addEventListener('install', e => { self.skipWaiting(); });
         self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
         self.addEventListener('fetch', e => {
@@ -2387,8 +2565,14 @@ window.updateMonthlyAmount = updateMonthlyAmount;
 window.openEditModal = openEditModal;
 window.saveEdit = saveEdit;
 window.editSetType = editSetType;
+window.confirmPay = confirmPay;
 window.confirmDelete = confirmDelete;
 window.doDelete = doDelete;
+window.confirmUndoPay = confirmUndoPay;
+window.doUndoPay = doUndoPay;
+window.confirmUndoPayDirect = confirmUndoPayDirect;
+window.setRegisterStatus = setRegisterStatus;
+window.setRegisterVehicleType = setRegisterVehicleType;
 window.exportJSON = exportJSON;
 window.exportAndEmailJSON = exportAndEmailJSON;
 window.importJSON = importJSON;
