@@ -952,31 +952,59 @@ function plateExists(plate, excludeId = null) {
 /* ==================================================================
    LÓGICA DE VENCIMIENTO
 ================================================================== */
-function getNextPaymentDate(v) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayMonthKey = monthKey(today);
+function addCalendarMonth(date) {
+  // Suma un mes calendario y conserva el día cuando existe (31 -> último día del mes).
+  const source = new Date(date);
+  const day = source.getDate();
+  const target = new Date(source.getFullYear(), source.getMonth() + 1, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  target.setDate(Math.min(day, lastDay));
+  target.setHours(23, 59, 59, 999);
+  return target;
+}
 
+function getScheduledDueDate(v) {
+  const today = new Date();
+  const paymentDay = Math.max(1, Math.min(31, Number(v.paymentDay) || 1));
+  let year = today.getFullYear();
+  let month = today.getMonth();
+  const candidateDay = Math.min(paymentDay, new Date(year, month + 1, 0).getDate());
+  let due = new Date(year, month, candidateDay, 23, 59, 59, 999);
+
+  // Si la fecha de pago de este mes ya pasó y aún no hay pago, se conserva
+  // como vencida; no se desplaza automáticamente al mes siguiente.
+  return due;
+}
+
+function getNextPaymentDate(v) {
+  // La fecha persistida es la fuente de verdad: permite conservar meses
+  // pagados por adelantado incluso cuando cambia el mes calendario.
+  if (v && v.nextDueDate) {
+    const stored = new Date(v.nextDueDate);
+    if (!isNaN(stored.getTime())) return stored;
+  }
+
+  const today = new Date();
+  const todayMonthKey = monthKey(today);
   const paymentDay = Math.max(1, Math.min(31, Number(v.paymentDay) || 1));
   const paidThisMonth = (v.lastPaidMonth === todayMonthKey);
 
   let baseYear = today.getFullYear();
   let baseMonth = today.getMonth();
-
-  if (paidThisMonth) {
-    baseMonth += 1;
-    if (baseMonth > 11) { baseMonth = 0; baseYear += 1; }
-  }
+  if (paidThisMonth) baseMonth += 1;
 
   const maxDay = new Date(baseYear, baseMonth + 1, 0).getDate();
   const targetDay = Math.min(paymentDay, maxDay);
-  return new Date(baseYear, baseMonth, targetDay, 23, 59, 59);
+  return new Date(baseYear, baseMonth, targetDay, 23, 59, 59, 999);
 }
 
 function getDaysRemaining(dueDate) {
-  const now = new Date();
-  const due = dueDate instanceof Date ? dueDate : new Date(dueDate);
-  return Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+  // Comparar fechas de calendario evita que la hora del pago sume un día extra.
+  const due = dueDate instanceof Date ? new Date(dueDate) : new Date(dueDate);
+  const today = new Date();
+  due.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  return Math.round((due - today) / 86400000);
 }
 
 function getNextDueDate(v) {
@@ -985,13 +1013,11 @@ function getNextDueDate(v) {
 
 function isDueNow(v) {
   if (!v) return false;
+  const due = getNextDueDate(v);
   const today = new Date();
-  const todayMonthKey = monthKey(today);
-  const paymentDay = Number(v.paymentDay) || 1;
-
-  if (v.lastPaidMonth === todayMonthKey) return false;
-  if (paymentDay <= today.getDate()) return true;
-  return false;
+  today.setHours(0, 0, 0, 0);
+  due.setHours(0, 0, 0, 0);
+  return due <= today;
 }
 
 /* ==================================================================
@@ -1746,6 +1772,7 @@ function saveEdit() {
 
   if (dayChanged) {
     v.lastPaidMonth = null;
+    delete v.nextDueDate;
   }
 
   saveState();
@@ -1787,6 +1814,7 @@ function doUndoPay(id) {
   if (idx === -1) return;
   const v = state.activeMonths[idx];
   v.lastPaidMonth = null;
+  delete v.nextDueDate;
   state.notifiedToday = state.notifiedToday.filter(x => x !== id);
   saveState();
   closeModal();
@@ -1889,6 +1917,8 @@ function registerMes() {
 
   if (registerSelectedStatus === 'pagado') {
     newVehicle.lastPaidMonth = monthKey(now);
+    const scheduledDue = getScheduledDueDate(newVehicle);
+    newVehicle.nextDueDate = addCalendarMonth(scheduledDue).toISOString();
     state.history.unshift({
       id: uid('hist'),
       plate,
@@ -1949,6 +1979,14 @@ function payMonthly(id) {
   const amount = getMonthlyAmount(v);
 
   const now = new Date();
+  // Si paga antes del vencimiento, se suma un mes a ese vencimiento (no desde hoy).
+  // Si ya estaba vencido, el nuevo ciclo comienza desde hoy.
+  const currentDue = getNextDueDate(v);
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+  const extensionBase = currentDue > todayStart ? currentDue : now;
+  const renewedDue = addCalendarMonth(extensionBase);
+  v.nextDueDate = renewedDue.toISOString();
   v.lastPaidMonth = monthKey(now);
 
   state.notifiedToday = state.notifiedToday.filter(x => x !== v.id);
